@@ -11,7 +11,7 @@ namespace WeixinTest
     [TestClass]
     public class CommonApiTest
     {
-
+        //ngrok Id 9c3812698fe36cd5
         private dynamic _appConfig;
         protected dynamic AppConfig
         {
@@ -33,8 +33,8 @@ namespace WeixinTest
                     {
                         _appConfig = new
                         {
-                            AppId = "YourAppId", //换成你的信息
-                            Secret = "YourSecret",//换成你的信息                          
+                            AppId = "wx19d451c7a4e3df1b", //换成你的信息
+                            Secret = "3f3a8c2a9e4ae037c18577fd979dc997",//换成你的信息                          
                         };
                     }
                 }
