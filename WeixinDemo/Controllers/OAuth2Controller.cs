@@ -21,7 +21,10 @@ namespace WeixinDemo.Controllers
         private string secret = ConfigurationManager.AppSettings["WeixinAppSecret"];
 
         private readonly string baseRedirectUrl = "http://doku.ngrok.cc/oauth2/BaseCallback";
-        private readonly string userInfoRedirectUrl = "http://doku.ngrok.cc/oauth2/UserInfoCallback";
+        private readonly string userInfoRedirectUrl = "http://doku.ngrok.cc/Account/Bind";
+      
+
+
 
         public ActionResult Index()
         {

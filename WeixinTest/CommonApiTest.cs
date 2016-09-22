@@ -19,6 +19,7 @@ namespace WeixinTest
             {
                 if (_appConfig == null)
                 {
+                    
                     if (File.Exists("../../test.config"))
                     {
                         var doc = XDocument.Load("../../test.config");
