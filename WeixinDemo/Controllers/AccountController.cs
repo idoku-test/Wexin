@@ -7,8 +7,10 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using WeixinDemo.Logic;
+using WeixinDemo.Models;
 
 namespace WeixinDemo.Controllers
 {
@@ -16,12 +18,32 @@ namespace WeixinDemo.Controllers
     {
         private string appId = ConfigurationManager.AppSettings["WeixinAppId"];
         private string secret = ConfigurationManager.AppSettings["WeixinAppSecret"];
-
+        private UserLogic userLogic = new UserLogic();
         // GET: Account
         public ActionResult Index()
         {
-            
+            var user = Session["User"] as UserDto;           
+            return View(user);
+        }
+
+        public ActionResult Register()
+        {            
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Register(UserDto user)
+        {        
+            var tokenResult = Session["OAuthAccessToken"] as OAuthAccessTokenResult;
+            if (tokenResult != null)
+            {
+                user.OpenId = tokenResult.openid;
+            }
+            userLogic.AddUser(user);
+            Session["User"] = user;
+            
+            return RedirectToAction("Index");
         }
 
         public ActionResult Bind(string code, string state)
@@ -61,11 +83,12 @@ namespace WeixinDemo.Controllers
             //因为第一步选择的是OAuthScope.snsapi_userinfo，这里可以进一步获取用户详细信息
             try
             {
-                var userLogic = new UserLogic();
                 var userList = userLogic.GetAllUser();
                 if (userList.Any(u=>u.OpenId==result.openid))
                 {
-                    return View("Index");
+                    Session["User"] = userList.FirstOrDefault(u => u.OpenId == result.openid);
+                    //已经绑定,直接登录
+                    return RedirectToAction("Index");
                 }
                 return View();
             }
@@ -74,6 +97,39 @@ namespace WeixinDemo.Controllers
                 return Content(ex.Message);
             }
 
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Bind(UserDto user)
+        {
+            //因为第一步选择的是OAuthScope.snsapi_userinfo，这里可以进一步获取用户详细信息
+            try
+            { 
+                var userList = userLogic.GetAllUser();
+                if (userList.Any(u => u.UserId == user.UserId))
+                {
+                    var curUser = userList.FirstOrDefault(u => u.UserId == user.UserId);
+
+                    if (curUser != null)
+                    {
+                        var userInfo = Session["OAuthAccessToken"] as OAuthAccessTokenResult;
+                        if (userInfo != null)
+                        {
+                            curUser.OpenId = userInfo.openid;
+                            userLogic.UpdateUser(curUser);
+                            Session["User"] = curUser;
+                            return RedirectToAction("Index");
+                        }
+                    }
+                    return View(curUser);
+                }
+                return View();
+            }
+            catch (Exception ex)
+            {
+                return Content(ex.Message);
+            }
         }
     }
 }
