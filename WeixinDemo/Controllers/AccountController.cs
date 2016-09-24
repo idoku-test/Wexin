@@ -26,6 +26,28 @@ namespace WeixinDemo.Controllers
             return View(user);
         }
 
+        public ActionResult List()
+        {
+            var list = userLogic.GetAllUser();
+            return View(list);
+        }
+
+        public ActionResult InitData()
+        {
+            var userList = new List<UserDto>();
+            userList.Add(new UserDto() { OpenId = "oDsxRwIWa-h9n467cw6fFs3qLyGw", UserId = "冷神" });
+            userList.Add(new UserDto() { OpenId = "oDsxRwKyjgOpprvKTIrszpnObRgw", UserId = "www.邓昊.org" });
+            userList.Add(new UserDto() { OpenId = "oDsxRwGPioUgweqLNUertJ1Mkzao", UserId = "唐福涛" });
+            userList.Add(new UserDto() { OpenId = "oDsxRwAA0CWpgn_VsJ0XEhsEEXrE", UserId = "刘小磊" });
+            userList.Add(new UserDto() { OpenId = "oDsxRwJBL5BvoIQ9UP7sBHl2Is8M", UserId = "刘兴华" });
+            userList.Add(new UserDto() { OpenId = "oDsxRwMW-HOjk8TkHJXe690KxaFw", UserId = "酷龙" });
+            foreach (var user in userList)
+            {
+                userLogic.AddUser(user);
+            }
+            return RedirectToAction("Register");
+        }
+
         public ActionResult Register()
         {            
             return View();

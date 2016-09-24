@@ -1,0 +1,42 @@
+﻿@model IEnumerable<WeixinDemo.Models.UserDto>
+
+@{
+    ViewBag.Title = "List";
+}
+
+<script type="text/javascript">
+    function send(openId) {
+        $.get("/api/Common/Send", { openId: openId },
+            function(result) {
+                $("#span").append(result);
+            });
+    };
+</script>
+<h2>关注列表</h2>
+<span id="span"></span>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.UserId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.OpenId)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.UserId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.OpenId)
+        </td>
+        <td>
+            <a onclick="send('@item.OpenId')" href="#">发送消息</a>
+        </td>
+    </tr>
+}
+
+</table>
